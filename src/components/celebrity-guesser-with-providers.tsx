@@ -4,6 +4,7 @@ import { WagmiProvider } from "wagmi";
 import { config } from "@/utils/wagmi";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "./ui/sonner";
+import { GameProvider } from "./game-context";
 
 const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,7 +14,7 @@ const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
       enableSystem
       disableTransitionOnChange
     >
-      {children}
+      <GameProvider>{children}</GameProvider>
       <Toaster />
     </ThemeProvider>
   );

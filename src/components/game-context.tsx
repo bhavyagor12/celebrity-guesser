@@ -11,6 +11,8 @@ export type Category =
 
 type GameContextType = {
   category: Category | null;
+  character: string | null;
+  setCharacter: (character: string | null) => void;
   setCategory: (category: Category | null) => void;
   characterRevealed: boolean;
   setCharacterRevealed: (revealed: boolean) => void;
@@ -20,6 +22,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [category, setCategory] = useState<Category | null>(null);
+  const [character, setCharacter] = useState<string | null>(null);
   const [characterRevealed, setCharacterRevealed] = useState(false);
 
   return (
@@ -27,6 +30,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       value={{
         category,
         setCategory,
+        character,
+        setCharacter,
         characterRevealed,
         setCharacterRevealed,
       }}
