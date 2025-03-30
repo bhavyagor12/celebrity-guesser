@@ -1,9 +1,9 @@
 import type React from "react";
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "@/components/ui/sonner";
 import { Inter } from "next/font/google";
+import { CelebrityAppWithProviders } from "@/components/celebrity-guesser-with-providers";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,15 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <CelebrityAppWithProviders>{children}</CelebrityAppWithProviders>
       </body>
     </html>
   );
