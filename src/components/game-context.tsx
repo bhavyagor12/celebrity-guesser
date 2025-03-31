@@ -27,18 +27,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [character, setCharacter] = useState<string | null>(null);
   const [characterRevealed, setCharacterRevealed] = useState(false);
   const [countOfPunishments, setCountOfPunishments] = useState(0);
-
-  document?.documentElement.addEventListener("mouseleave", () => {
-    toast.error("You will be punished if you leave the game");
-    setCountOfPunishments((prev) => prev + 1);
-    if (countOfPunishments > 3) {
-      toast.error(
-        "You have been punished for leaving the game and hence the game has been reset",
-      );
-      setCategory(null);
-      setCountOfPunishments(0);
-    }
-  });
+  
+  if (typeof window !== "undefined") {
+    document?.documentElement.addEventListener("mouseleave", () => {
+      toast.error("You will be punished if you leave the game");
+      setCountOfPunishments((prev) => prev + 1);
+      if (countOfPunishments > 3) {
+        toast.error(
+          "You have been punished for leaving the game and hence the game has been reset",
+        );
+        setCategory(null);
+        setCountOfPunishments(0);
+      }
+    });
+  }
 
   return (
     <GameContext.Provider

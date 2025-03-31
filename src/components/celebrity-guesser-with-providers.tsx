@@ -11,8 +11,6 @@ const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
     >
       <GameProvider>{children}</GameProvider>
       <Toaster />
