@@ -16,12 +16,12 @@ import { Input } from "./ui/input";
 import { Avatar } from "./ui/avatar";
 import { ScrollArea } from "./ui/scroll-area";
 import { Loader2, Send, RefreshCw } from "lucide-react";
-import GuessForm from "./guess-form";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 type Message = {
   role: "user" | "assistant";
   content: string;
+  type: string;
 };
 
 export default function AIChat() {
@@ -39,6 +39,7 @@ export default function AIChat() {
     const userMessage: Message = {
       role: "user",
       content: input,
+      type: "info",
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -54,7 +55,7 @@ export default function AIChat() {
 
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: aiResponse },
+        { role: "assistant", content: aiResponse, type: "info" },
       ]);
     } catch (error) {
       console.error("Error generating AI response:", error);
@@ -74,7 +75,8 @@ export default function AIChat() {
         {
           role: "assistant",
           content:
-            "Hello there! I'm a mystery character. Chat with me and try to guess who I am. I'll drop some hints along the way!",
+            "Hey to begin playing you need to submit 0.001 eth and remember to not leave the screen as doing it thrice will end the game.",
+          type: "starter",
         },
       ]);
     }
