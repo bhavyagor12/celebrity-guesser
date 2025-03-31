@@ -90,7 +90,7 @@ export default function AIChat() {
                 ? `Chatting with ${character}`
                 : `Mystery ${category?.slice(0, -1) || "Character"}`}
             </CardTitle>
-            <Button variant="outline" size="icon" onClick={() => { }}>
+            <Button variant="outline" size="icon" onClick={() => {}}>
               <RefreshCw className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -105,10 +105,11 @@ export default function AIChat() {
                   <div className="flex items-start gap-3 max-w-[80%]">
                     {message.role === "assistant" && <Avatar>🤖</Avatar>}
                     <div
-                      className={`rounded-lg px-4 py-2 ${message.role === "user"
+                      className={`rounded-lg px-4 py-2 ${
+                        message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted"
-                        }`}
+                      }`}
                     >
                       {message.content}
                     </div>
@@ -148,12 +149,11 @@ export default function AIChat() {
                     )}
                   </Button>
                 </form>
-                <GuessForm />
               </>
             ) : (
               <div className="text-center w-full">
                 <p className="mb-2">Character revealed! It was {character}.</p>
-                <Button onClick={() => { }}>Play Again</Button>
+                <Button onClick={() => {}}>Play Again</Button>
               </div>
             )}
           </CardFooter>

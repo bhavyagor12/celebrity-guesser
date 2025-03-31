@@ -1,7 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import { toast } from "sonner";
+
 export type Category =
   | "Football"
   | "Hollywood Movies"
@@ -27,20 +34,37 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [character, setCharacter] = useState<string | null>(null);
   const [characterRevealed, setCharacterRevealed] = useState(false);
   const [countOfPunishments, setCountOfPunishments] = useState(0);
-  
-  if (typeof window !== "undefined") {
-    document?.documentElement.addEventListener("mouseleave", () => {
-      toast.error("You will be punished if you leave the game");
-      setCountOfPunishments((prev) => prev + 1);
-      if (countOfPunishments > 3) {
-        toast.error(
-          "You have been punished for leaving the game and hence the game has been reset",
-        );
-        setCategory(null);
-        setCountOfPunishments(0);
-      }
-    });
-  }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleMouseLeave = () => {
+      if (category === null) return;
+      setCountOfPunishments((prev) => {
+        const newCount = prev + 1;
+        toast.error("You will be punished if you leave the game");
+
+        if (newCount > 3) {
+          toast.error(
+            "You have been punished for leaving the game and hence the game has been reset",
+          );
+          setCategory(null);
+          return 0; // Reset punishments count
+        }
+
+        return newCount;
+      });
+    };
+
+    document.documentElement.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      document.documentElement.removeEventListener(
+        "mouseleave",
+        handleMouseLeave,
+      );
+    };
+  }, []);
 
   return (
     <GameContext.Provider
