@@ -35,7 +35,8 @@ export async function generateChatResponse({
     // Create the prompt for the AI
     const prompt = `
 <instructions>
-You will roleplay as a famous person from the category <category>${category}</category>. 
+You will roleplay as a famous person from the category <category>${category}</category>.
+Choose a character that has history / records from 1980s to 2020s. 
 The user is trying to guess your identity through conversation. 
 Your goal is to make this challenging but fair.
 

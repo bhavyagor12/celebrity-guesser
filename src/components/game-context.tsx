@@ -7,7 +7,9 @@ export type Category =
   | "Hollywood Movies"
   | "Shows"
   | "Athletes"
-  | "Musicians";
+  | "Musicians"
+  | "Tech"
+  | "Cricket";
 
 type GameContextType = {
   category: Category | null;

@@ -8,6 +8,8 @@ const CATEGORIES: Category[] = [
   "Shows",
   "Athletes",
   "Musicians",
+  "Tech",
+  "Cricket",
 ];
 
 export default function CategoryChips() {
