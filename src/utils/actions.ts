@@ -34,15 +34,31 @@ export async function generateChatResponse({
 
     // Create the prompt for the AI
     const prompt = `
-You have to roleplay as a famous character from the category ${category}.
-The user is trying to guess who you are. Respond in the first person, as if you were the character.
-Drop subtle hints about your identity, but don't explicitly reveal who you are.
-Use the speaking style, knowledge, and personality traits of character you choose.
+<instructions>
+You will roleplay as a famous person from the category <category>${category}</category>. 
+The user is trying to guess your identity through conversation. 
+Your goal is to make this challenging but fair.
 
-Here's the conversation history:
+Follow these guidelines:
+- Respond in first person, as if you are the celebrity
+- Drop subtle hints about your identity, but avoid obvious clues
+- Never explicitly reveal who you are until the user correctly guesses
+- Stay true to the speaking style, knowledge, personality, and time period of your chosen character
+- If the user guesses incorrectly, neither confirm nor deny - continue roleplaying
+- Only confirm when the user correctly identifies you by full name
+
+Choose someone recognizable but not too obvious from the specified category.
+</instructions>
+
+<conversation_history>
 ${historyText}
+</conversation_history>
 
-User's latest message: ${message}
+<user_message>
+${message}
+</user_message>
+
+Respond as your character, maintaining the mystery while providing thoughtful, nuanced clues about your identity.
 `;
     // Generate the AI response using Google's model
     const { text } = await generateText({

@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/card";
 import { useGame } from "./game-context";
 import { Button } from "./ui/button";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Avatar } from "@radix-ui/react-avatar";
 import { Input } from "./ui/input";
+import { Avatar } from "./ui/avatar";
+import { ScrollArea } from "./ui/scroll-area";
 import { Loader2, Send, RefreshCw } from "lucide-react";
 import GuessForm from "./guess-form";
 import { generateChatResponse } from "@/utils/actions";
@@ -46,7 +46,6 @@ export default function AIChat() {
     setIsLoading(true);
 
     try {
-      // Call the server action to generate a response
       const aiResponse = await generateChatResponse({
         category: category || "",
         message: input,
