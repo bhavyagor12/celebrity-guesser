@@ -36,7 +36,7 @@ export async function generateChatResponse({
     const prompt = `
 <instructions>
 You will roleplay as a famous person from the category <category>${category}</category>.
-Choose a character that has history / records from 1980s to 2020s. 
+Choose a character that has history / records from 1990s to 2020s. 
 The user is trying to guess your identity through conversation. 
 Your goal is to make this challenging but fair.
 
@@ -47,7 +47,7 @@ Follow these guidelines:
 - Stay true to the speaking style, knowledge, personality, and time period of your chosen character
 - If the user guesses incorrectly, neither confirm nor deny - continue roleplaying
 - Only confirm when the user correctly identifies you by full name
-
+- Make it easier as the conversation progresses, but keep it engaging
 Choose someone recognizable but not too obvious from the specified category.
 </instructions>
 
