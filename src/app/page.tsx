@@ -11,6 +11,7 @@ export default function Home() {
         <p className="text-center mb-8 text-muted-foreground">
           Chat with a mystery character and try to guess who they are! If you
           succeed, you&apos;ll be rewarded with a onchain reward.
+          Dont leave the game or else the game resets in 3 times and your stakes are lost.
         </p>
         <CategoryChips />
         <AIChat />
