@@ -70,6 +70,9 @@ export default function AIChat() {
   }, [messages]);
 
   useEffect(() => {
+    if (!category) {
+      setMessages([]);
+    }
     if (category && messages.length === 0) {
       setMessages([
         // {
