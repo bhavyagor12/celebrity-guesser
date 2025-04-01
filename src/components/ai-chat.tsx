@@ -30,7 +30,7 @@ export default function AIChat() {
   const [contextAccounts, setContextAccounts] = useState<Array<`0x${string}`>>(
     [],
   );
-  const [profileConnected, setProfileConnected] = useState(false);
+  const [, setProfileConnected] = useState(false);
 
   // Helper to check connection status
   const updateConnected = useCallback(

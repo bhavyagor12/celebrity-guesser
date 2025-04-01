@@ -8,7 +8,8 @@ import { GameProvider } from "./game-context";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { createClientUPProvider } from "@lukso/up-provider";
 
-let upProvider;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let upProvider: any;
 
 if (typeof window !== "undefined") {
   upProvider = createClientUPProvider();
