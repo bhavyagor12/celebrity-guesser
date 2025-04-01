@@ -5,13 +5,10 @@ import { config } from "@/utils/wagmi";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "./ui/sonner";
 import { GameProvider } from "./game-context";
-
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-    >
+    <ThemeProvider attribute="class" defaultTheme="system">
       <GameProvider>{children}</GameProvider>
       <Toaster />
     </ThemeProvider>
@@ -34,7 +31,9 @@ export const CelebrityAppWithProviders = ({
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
         <CelebrityApp>{children}</CelebrityApp>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

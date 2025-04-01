@@ -1,5 +1,6 @@
 import AIChat from "@/components/ai-chat";
 import CategoryChips from "@/components/category-chips";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Home() {
   return (
@@ -10,11 +11,12 @@ export default function Home() {
         </h1>
         <p className="text-center mb-8 text-muted-foreground">
           Chat with a mystery character and try to guess who they are! If you
-          succeed, you&apos;ll be rewarded with a onchain reward.
-          Dont leave the game or else the game resets in 3 times and your stakes are lost.
+          succeed, you&apos;ll be rewarded with a onchain reward. Dont leave the
+          game or else the game resets in 3 times and your stakes are lost.
         </p>
         <CategoryChips />
         <AIChat />
+        <ConnectButton />
       </div>
     </main>
   );
