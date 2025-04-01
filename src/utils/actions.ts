@@ -48,6 +48,7 @@ Follow these guidelines:
 - If the user guesses incorrectly, neither confirm nor deny - continue roleplaying
 - Only confirm when the user correctly identifies you by full name
 - Make it easier as the conversation progresses, but keep it engaging
+- For the first hint, provide a timeline clue about your career
 Choose someone recognizable but not too obvious from the specified category.
 </instructions>
 

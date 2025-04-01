@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Avatar } from "./ui/avatar";
 import { ScrollArea } from "./ui/scroll-area";
-import { Loader2, Send, RefreshCw } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 type Message = {
@@ -72,11 +72,17 @@ export default function AIChat() {
   useEffect(() => {
     if (category && messages.length === 0) {
       setMessages([
+        // {
+        //   role: "assistant",
+        //   content:
+        //     "Hey to begin playing you need to submit 0.001 eth and remember to not leave the screen as doing it thrice will end the game.",
+        //   type: "starter",
+        // },
         {
           role: "assistant",
           content:
-            "Hey to begin playing you need to submit 0.001 eth and remember to not leave the screen as doing it thrice will end the game.",
-          type: "starter",
+            "Welcome to the game! I'm a mystery character. Ask me questions to guess who I am.",
+          type: "info",
         },
       ]);
     }
@@ -149,9 +155,9 @@ export default function AIChat() {
                 ? `Chatting with ${character}`
                 : `Mystery ${category?.slice(0, -1) || "Character"}`}
             </CardTitle>
-            <Button variant="outline" size="icon" onClick={() => { }}>
+            {/* Button variant="outline" size="icon" onClick={() => { }}>
               <RefreshCw className="h-4 w-4" />
-            </Button>
+            </Button> */}
           </CardHeader>
 
           <CardContent>

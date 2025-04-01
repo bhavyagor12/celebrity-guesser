@@ -35,36 +35,36 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [characterRevealed, setCharacterRevealed] = useState(false);
   const [, setCountOfPunishments] = useState(0);
 
-  // useEffect(() => {
-  //   if (typeof window === "undefined") return;
-  //
-  //   const handleMouseLeave = () => {
-  //     if (category === null) return;
-  //     setCountOfPunishments((prev) => {
-  //       const newCount = prev + 1;
-  //       toast.warning("You will be punished if you leave the game");
-  //
-  //       if (newCount > 3) {
-  //         toast.error(
-  //           "You have been punished for leaving the game and hence the game has been reset",
-  //         );
-  //         setCategory(null);
-  //         return 0;
-  //       }
-  //
-  //       return newCount;
-  //     });
-  //   };
-  //
-  //   document.documentElement.addEventListener("mouseleave", handleMouseLeave);
-  //
-  //   return () => {
-  //     document.documentElement.removeEventListener(
-  //       "mouseleave",
-  //       handleMouseLeave,
-  //     );
-  //   };
-  // }, [category]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleMouseLeave = () => {
+      if (category === null) return;
+      setCountOfPunishments((prev) => {
+        const newCount = prev + 1;
+        toast.warning("You will be punished if you leave the game");
+
+        if (newCount > 3) {
+          toast.error(
+            "You have been punished for leaving the game and hence the game has been reset",
+          );
+          setCategory(null);
+          return 0;
+        }
+
+        return newCount;
+      });
+    };
+
+    document.documentElement.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      document.documentElement.removeEventListener(
+        "mouseleave",
+        handleMouseLeave,
+      );
+    };
+  }, [category]);
 
   return (
     <GameContext.Provider
