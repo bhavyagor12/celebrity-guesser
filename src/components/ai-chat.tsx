@@ -154,9 +154,7 @@ export default function AIChat() {
         <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>
-              {characterRevealed
-                ? `Chatting with ${character}`
-                : `Mystery ${category?.slice(0, -1) || "Character"}`}
+              Guess Who I Am: {category} 
             </CardTitle>
             {/* Button variant="outline" size="icon" onClick={() => { }}>
               <RefreshCw className="h-4 w-4" />
