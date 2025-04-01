@@ -82,6 +82,63 @@ export default function AIChat() {
     }
   }, [category, messages.length]);
 
+  const handleSubmitEth = () => {
+    console.log("Submitting ETH to start the game");
+    // Add your ETH submission logic here
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content:
+          "Payment received! Let's start the game. Ask me questions to guess who I am.",
+        type: "info",
+      },
+    ]);
+  };
+
+  const messageRenderer = (message: Message) => {
+    switch (message.type) {
+      case "starter":
+        return (
+          <div className="flex items-start gap-3 max-w-full">
+            <Avatar>🤖</Avatar>
+            <div className="rounded-lg px-4 py-3 border border-black-300">
+              <p className="mb-3">{message.content}</p>
+              <Button
+                onClick={handleSubmitEth}
+                disabled={messages.length > 1}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Submit 0.001 ETH to Play
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="flex items-start gap-3 max-w-[80%]">
+            {message.role === "assistant" && <Avatar>🤖</Avatar>}
+            <div
+              className={`rounded-lg px-4 py-2 ${message.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted"
+                }`}
+            >
+              {message.content}
+            </div>
+            {message.role === "user" && (
+              <Avatar>
+                <div className="bg-muted w-full h-full flex items-center justify-center">
+                  U
+                </div>
+              </Avatar>
+            )}
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="w-full space-y-8">
       {category ? (
@@ -92,7 +149,7 @@ export default function AIChat() {
                 ? `Chatting with ${character}`
                 : `Mystery ${category?.slice(0, -1) || "Character"}`}
             </CardTitle>
-            <Button variant="outline" size="icon" onClick={() => {}}>
+            <Button variant="outline" size="icon" onClick={() => { }}>
               <RefreshCw className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -104,25 +161,7 @@ export default function AIChat() {
                   key={index}
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} mb-4`}
                 >
-                  <div className="flex items-start gap-3 max-w-[80%]">
-                    {message.role === "assistant" && <Avatar>🤖</Avatar>}
-                    <div
-                      className={`rounded-lg px-4 py-2 ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      }`}
-                    >
-                      {message.content}
-                    </div>
-                    {message.role === "user" && (
-                      <Avatar>
-                        <div className="bg-muted w-full h-full flex items-center justify-center">
-                          U
-                        </div>
-                      </Avatar>
-                    )}
-                  </div>
+                  {messageRenderer(message)}
                 </div>
               ))}
               <div ref={messagesEndRef} />
@@ -155,7 +194,7 @@ export default function AIChat() {
             ) : (
               <div className="text-center w-full">
                 <p className="mb-2">Character revealed! It was {character}.</p>
-                <Button onClick={() => {}}>Play Again</Button>
+                <Button onClick={() => { }}>Play Again</Button>
               </div>
             )}
           </CardFooter>
