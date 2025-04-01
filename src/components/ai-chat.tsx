@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -18,6 +18,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
+import { upProvider } from "./celebrity-guesser-with-providers";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -25,6 +26,63 @@ type Message = {
 };
 
 export default function AIChat() {
+  const [accounts, setAccounts] = useState<Array<`0x${string}`>>([]);
+  const [contextAccounts, setContextAccounts] = useState<Array<`0x${string}`>>(
+    [],
+  );
+  const [profileConnected, setProfileConnected] = useState(false);
+
+  // Helper to check connection status
+  const updateConnected = useCallback(
+    (
+      _accounts: Array<`0x${string}`>,
+      _contextAccounts: Array<`0x${string}`>,
+    ) => {
+      setProfileConnected(_accounts.length > 0 && _contextAccounts.length > 0);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    async function init() {
+      try {
+        const _accounts = upProvider.accounts as Array<`0x${string}`>;
+        setAccounts(_accounts);
+
+        const _contextAccounts = upProvider.contextAccounts;
+        updateConnected(_accounts, _contextAccounts);
+      } catch (error) {
+        console.error("Failed to initialize provider:", error);
+      }
+    }
+
+    // Handle account changes
+    const accountsChanged = (_accounts: Array<`0x${string}`>) => {
+      setAccounts(_accounts);
+      updateConnected(_accounts, contextAccounts);
+    };
+
+    const contextAccountsChanged = (_accounts: Array<`0x${string}`>) => {
+      setContextAccounts(_accounts);
+      updateConnected(accounts, _accounts);
+    };
+
+    init();
+
+    // Set up event listeners
+    upProvider.on("accountsChanged", accountsChanged);
+    upProvider.on("contextAccountsChanged", contextAccountsChanged);
+
+    // Cleanup listeners
+    return () => {
+      upProvider.removeListener("accountsChanged", accountsChanged);
+      upProvider.removeListener(
+        "contextAccountsChanged",
+        contextAccountsChanged,
+      );
+    };
+  }, [accounts[0], contextAccounts[0], updateConnected]);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const { category, characterRevealed, character } = useGame();
   const [input, setInput] = useState("");
@@ -153,9 +211,7 @@ export default function AIChat() {
       {category ? (
         <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>
-              Guess Who I Am: {category} 
-            </CardTitle>
+            <CardTitle>Guess Who I Am: {category}</CardTitle>
             {/* Button variant="outline" size="icon" onClick={() => { }}>
               <RefreshCw className="h-4 w-4" />
             </Button> */}

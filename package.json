@@ -6,10 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "vercel": "vercel",
+    "prod": "vercel --prod",
+    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --prod"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.3",
+    "@lukso/up-provider": "^0.3.5",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "@radix-ui/react-slot": "^1.1.2",
@@ -26,6 +30,7 @@
     "sonner": "^2.0.2",
     "tailwind-merge": "^3.0.2",
     "tw-animate-css": "^1.2.5",
+    "vercel": "^41.4.1",
     "viem": "^2.24.3",
     "wagmi": "^2.14.16"
   },
