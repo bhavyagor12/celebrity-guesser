@@ -18,7 +18,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
-import { upProvider } from "./celebrity-guesser-with-providers";
+import { lukso_provider } from "@/utils/lukso-client";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -46,10 +46,10 @@ export default function AIChat() {
   useEffect(() => {
     async function init() {
       try {
-        const _accounts = upProvider.accounts as Array<`0x${string}`>;
+        const _accounts = lukso_provider.accounts as Array<`0x${string}`>;
         setAccounts(_accounts);
 
-        const _contextAccounts = upProvider.contextAccounts;
+        const _contextAccounts = lukso_provider.contextAccounts;
         updateConnected(_accounts, _contextAccounts);
       } catch (error) {
         console.error("Failed to initialize provider:", error);
@@ -70,13 +70,13 @@ export default function AIChat() {
     init();
 
     // Set up event listeners
-    upProvider.on("accountsChanged", accountsChanged);
-    upProvider.on("contextAccountsChanged", contextAccountsChanged);
+    lukso_provider.on("accountsChanged", accountsChanged);
+    lukso_provider.on("contextAccountsChanged", contextAccountsChanged);
 
     // Cleanup listeners
     return () => {
-      upProvider.removeListener("accountsChanged", accountsChanged);
-      upProvider.removeListener(
+      lukso_provider.removeListener("accountsChanged", accountsChanged);
+      lukso_provider.removeListener(
         "contextAccountsChanged",
         contextAccountsChanged,
       );

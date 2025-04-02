@@ -6,16 +6,6 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "./ui/sonner";
 import { GameProvider } from "./game-context";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { createClientUPProvider } from "@lukso/up-provider";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let upProvider: any;
-
-if (typeof window !== "undefined") {
-  upProvider = createClientUPProvider();
-}
-
-export { upProvider };
 
 const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
   return (
