@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
 // import { publicClientTest, walletClientTest } from "@/utils/lukso-client";
 import { useWriteContract } from "wagmi";
+import { parseEther } from "viem";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -163,6 +164,7 @@ export default function AIChat() {
         address: lukso_contract_dets.contractAddress as `0x${string}`,
         functionName: "startGame",
         args: [1],
+        value: parseEther("0.002"), // Converts ETH to wei
       },
       {
         onSuccess: (data) => {
