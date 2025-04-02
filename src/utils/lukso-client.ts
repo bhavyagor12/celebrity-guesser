@@ -22,4 +22,4 @@ const walletClientTest = createWalletClient({
   transport: custom(lukso_provider),
 });
 
-export { publicClient, walletClient, publicClientTest, walletClientTest };
+// export { publicClient, walletClient, publicClientTest, walletClientTest };

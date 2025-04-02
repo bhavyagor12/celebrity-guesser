@@ -19,54 +19,60 @@ import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
-import { publicClientTest, walletClientTest } from "@/utils/lukso-client";
-import { useMutation } from "@tanstack/react-query";
-import { useQuery } from "wagmi/query";
+// import { publicClientTest, walletClientTest } from "@/utils/lukso-client";
+import { useWriteContract } from "wagmi";
 type Message = {
   role: "user" | "assistant";
   content: string;
   type: string;
 };
 
-const fetchBaseEntryFee = async () => {
-  try {
-    const fee = await publicClientTest.readContract({
-      address: lukso_contract_dets.contractAddress as `0x${string}`,
-      abi: lukso_contract_dets.abi,
-      functionName: "baseEntryFee",
-    });
-    return fee;
-  } catch (error) {
-    console.error("Error fetching base entry fee:", error);
-  }
-};
+// const fetchBaseEntryFee = async () => {
+//   try {
+//     const fee = await publicClientTest.readContract({
+//       address: lukso_contract_dets.contractAddress as `0x${string}`,
+//       abi: lukso_contract_dets.abi,
+//       functionName: "baseEntryFee",
+//     });
+//     return fee;
+//   } catch (error) {
+//     console.error("Error fetching base entry fee:", error);
+//   }
+// };
 
-const startGame = async (_difficulty: number) => {
-  try {
-    const baseEntryFee = await fetchBaseEntryFee();
-
-    const { request } = await publicClientTest.simulateContract({
-      address: lukso_contract_dets.contractAddress as `0x${string}`,
-      abi: lukso_contract_dets.abi,
-      functionName: "startGame",
-      args: [_difficulty],
-      value: baseEntryFee as bigint,
-    });
-    console.log("Request:", request);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const txHash = await walletClientTest.writeContract(request as any);
-    return txHash;
-  } catch (error) {
-    return error;
-  }
-};
+// const startGame = async (_difficulty: number) => {
+//   try {
+//     const baseEntryFee = await fetchBaseEntryFee();
+//
+//     const { request } = await publicClientTest.simulateContract({
+//       address: lukso_contract_dets.contractAddress as `0x${string}`,
+//       abi: lukso_contract_dets.abi,
+//       functionName: "startGame",
+//       args: [_difficulty],
+//       value: baseEntryFee as bigint,
+//     });
+//     console.log("Request:", request);
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     const txHash = await walletClientTest.writeContract(request as any);
+//     return txHash;
+//   } catch (error) {
+//     return error;
+//   }
+// };
 
 export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { category, characterRevealed, character } = useGame();
+  const {
+    category,
+    characterRevealed,
+    character,
+    setStartedGame,
+    setCharacterRevealed,
+  } = useGame();
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { writeContract } = useWriteContract();
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,11 +90,24 @@ export default function AIChat() {
     setIsLoading(true);
 
     try {
-      const aiResponse = await generateChatResponse({
+      const { response: aiResponse, isCorrect } = await generateChatResponse({
         category: category || "",
         message: input,
         messageHistory: messages,
       });
+
+      if (isCorrect) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: aiResponse,
+            type: "info",
+          },
+        ]);
+        setCharacterRevealed(true);
+        setStartedGame(false);
+      }
 
       setMessages((prev) => [
         ...prev,
@@ -128,32 +147,60 @@ export default function AIChat() {
     }
   }, [category, messages.length]);
 
-  const handleStartLuksoMutation = useMutation({
-    mutationFn: startGame,
-    onSuccess: () => {
-      console.log("Game started successfully!");
-    },
-    onError: (error) => {
-      console.error("Error starting game:", error);
-    },
-  });
+  // const handleStartLuksoMutation = useMutation({
+  //   mutationFn: startGame,
+  //   onSuccess: () => {
+  //     console.log("Game started successfully!");
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error starting game:", error);
+  //   },
+  // });
   const handleSubmitEth = () => {
-    handleStartLuksoMutation.mutate(1, {
-      onSuccess: () => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content:
-              "Payment received! Let's start the game. Ask me questions to guess who I am.",
-            type: "info",
-          },
-        ]);
+    writeContract(
+      {
+        abi: lukso_contract_dets.abi,
+        address: lukso_contract_dets.contractAddress as `0x${string}`,
+        functionName: "startGame",
+        args: [1],
       },
-      onError: (error) => {
-        console.error("Error starting game:", error);
+      {
+        onSuccess: (data) => {
+          console.log("Game started successfully!", data);
+          setStartedGame(true);
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content:
+                "Payment received! Let's start the game. Ask me questions to guess who I am.",
+              type: "info",
+            },
+          ]);
+        },
+        onError: (error) => {
+          console.error("Error starting game:", error);
+        },
       },
-    });
+    );
+
+    // handleStartLuksoMutation.mutate(1, {
+    //   onSuccess: (data) => {
+    //     console.log("Game started successfully!", data);
+    //     setMessages((prev) => [
+    //       ...prev,
+    //       {
+    //         role: "assistant",
+    //         content:
+    //           "Payment received! Let's start the game. Ask me questions to guess who I am.",
+    //         type: "info",
+    //       },
+    //     ]);
+    //   },
+    //   onError: (error) => {
+    //     console.error("Error starting game:", error);
+    //   },
+    // });
   };
 
   const messageRenderer = (message: Message) => {

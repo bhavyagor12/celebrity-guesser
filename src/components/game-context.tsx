@@ -25,6 +25,8 @@ type GameContextType = {
   setCategory: (category: Category | null) => void;
   characterRevealed: boolean;
   setCharacterRevealed: (revealed: boolean) => void;
+  startedGame: boolean;
+  setStartedGame: (started: boolean) => void;
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -33,10 +35,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [category, setCategory] = useState<Category | null>(null);
   const [character, setCharacter] = useState<string | null>(null);
   const [characterRevealed, setCharacterRevealed] = useState(false);
+  const [startedGame, setStartedGame] = useState(false);
   const [, setCountOfPunishments] = useState(0);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !startedGame) return;
 
     const handleMouseLeave = () => {
       if (category === null) return;
@@ -49,6 +52,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
             "You have been punished for leaving the game and hence the game has been reset",
           );
           setCategory(null);
+          setStartedGame(false);
           return 0;
         }
 
@@ -75,6 +79,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setCharacter,
         characterRevealed,
         setCharacterRevealed,
+        startedGame,
+        setStartedGame,
       }}
     >
       {children}

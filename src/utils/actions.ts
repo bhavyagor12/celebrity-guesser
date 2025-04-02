@@ -22,7 +22,7 @@ export async function generateChatResponse({
   category,
   message,
   messageHistory,
-}: ChatRequestParams): Promise<string> {
+}: ChatRequestParams): Promise<{ response: string; isCorrect: boolean }> {
   try {
     // Convert message history to a format the AI can understand
     const historyText = messageHistory
@@ -61,6 +61,15 @@ ${message}
 </user_message>
 
 Respond as your character, maintaining the mystery while providing thoughtful, nuanced clues about your identity.
+If the user guesses correctly by identifying you by full name, respond in this format:
+
+<response>
+[Your normal response confirming their correct guess]
+</response>
+
+<correct>true</correct>
+
+If the guess is incorrect, do **not** include the <correct> tag. Just continue roleplaying.
 `;
     // Generate the AI response using Google's model
     const { text } = await generateText({
@@ -70,9 +79,17 @@ Respond as your character, maintaining the mystery while providing thoughtful, n
       temperature: 0.7,
     });
 
-    return text;
+    // Extract the response text and check for the <correct> tag
+    const isCorrect = /<correct>\s*true\s*<\/correct>/i.test(text);
+    const responseMatch = text.match(/<response>([\s\S]*?)<\/response>/i);
+    const response = responseMatch ? responseMatch[1].trim() : text;
+
+    return { response, isCorrect };
   } catch (error) {
     console.error("Error generating AI response:", error);
-    return "I'm having trouble responding right now. Please try again.";
+    return {
+      response: "I'm having trouble responding right now. Please try again.",
+      isCorrect: false,
+    };
   }
 }
