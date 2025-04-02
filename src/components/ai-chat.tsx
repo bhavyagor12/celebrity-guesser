@@ -18,7 +18,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
-import { lukso_provider } from "@/utils/lukso-client";
+import { lukso_provider } from "./celebrity-guesser-with-providers";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -205,7 +205,6 @@ export default function AIChat() {
         );
     }
   };
-
   return (
     <div className="w-full space-y-8">
       {category ? (

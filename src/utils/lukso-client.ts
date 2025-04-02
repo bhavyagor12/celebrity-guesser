@@ -1,8 +1,6 @@
-import { createClientUPProvider } from "@lukso/up-provider";
+import { lukso_provider } from "@/components/celebrity-guesser-with-providers";
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { lukso } from "viem/chains";
-
-const lukso_provider = createClientUPProvider();
 
 const publicClient = createPublicClient({
   chain: lukso,
@@ -14,4 +12,4 @@ const walletClient = createWalletClient({
   transport: custom(lukso_provider),
 });
 
-export { lukso_provider, publicClient, walletClient };
+export { publicClient, walletClient };
