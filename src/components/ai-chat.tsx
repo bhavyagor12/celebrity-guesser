@@ -18,71 +18,50 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
-import { lukso_provider } from "./celebrity-guesser-with-providers";
+import { lukso_contract_dets } from "@/contracts/lukso";
+import { publicClientTest, walletClientTest } from "@/utils/lukso-client";
+import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "wagmi/query";
 type Message = {
   role: "user" | "assistant";
   content: string;
   type: string;
 };
 
+const fetchBaseEntryFee = async () => {
+  try {
+    const fee = await publicClientTest.readContract({
+      address: lukso_contract_dets.contractAddress as `0x${string}`,
+      abi: lukso_contract_dets.abi,
+      functionName: "baseEntryFee",
+    });
+    return fee;
+  } catch (error) {
+    console.error("Error fetching base entry fee:", error);
+  }
+};
+
+const startGame = async (_difficulty: number) => {
+  try {
+    const baseEntryFee = await fetchBaseEntryFee();
+
+    const { request } = await publicClientTest.simulateContract({
+      address: lukso_contract_dets.contractAddress as `0x${string}`,
+      abi: lukso_contract_dets.abi,
+      functionName: "startGame",
+      args: [_difficulty],
+      value: baseEntryFee as bigint,
+    });
+    console.log("Request:", request);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const txHash = await walletClientTest.writeContract(request as any);
+    return txHash;
+  } catch (error) {
+    return error;
+  }
+};
+
 export default function AIChat() {
-  const [accounts, setAccounts] = useState<Array<`0x${string}`>>([]);
-  const [contextAccounts, setContextAccounts] = useState<Array<`0x${string}`>>(
-    [],
-  );
-  const [, setProfileConnected] = useState(false);
-
-  // Helper to check connection status
-  const updateConnected = useCallback(
-    (
-      _accounts: Array<`0x${string}`>,
-      _contextAccounts: Array<`0x${string}`>,
-    ) => {
-      setProfileConnected(_accounts.length > 0 && _contextAccounts.length > 0);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    async function init() {
-      try {
-        const _accounts = lukso_provider.accounts as Array<`0x${string}`>;
-        setAccounts(_accounts);
-
-        const _contextAccounts = lukso_provider.contextAccounts;
-        updateConnected(_accounts, _contextAccounts);
-      } catch (error) {
-        console.error("Failed to initialize provider:", error);
-      }
-    }
-
-    // Handle account changes
-    const accountsChanged = (_accounts: Array<`0x${string}`>) => {
-      setAccounts(_accounts);
-      updateConnected(_accounts, contextAccounts);
-    };
-
-    const contextAccountsChanged = (_accounts: Array<`0x${string}`>) => {
-      setContextAccounts(_accounts);
-      updateConnected(accounts, _accounts);
-    };
-
-    init();
-
-    // Set up event listeners
-    lukso_provider.on("accountsChanged", accountsChanged);
-    lukso_provider.on("contextAccountsChanged", contextAccountsChanged);
-
-    // Cleanup listeners
-    return () => {
-      lukso_provider.removeListener("accountsChanged", accountsChanged);
-      lukso_provider.removeListener(
-        "contextAccountsChanged",
-        contextAccountsChanged,
-      );
-    };
-  }, [accounts[0], contextAccounts[0], updateConnected]);
-
   const [messages, setMessages] = useState<Message[]>([]);
   const { category, characterRevealed, character } = useGame();
   const [input, setInput] = useState("");
@@ -133,35 +112,48 @@ export default function AIChat() {
     }
     if (category && messages.length === 0) {
       setMessages([
-        // {
-        //   role: "assistant",
-        //   content:
-        //     "Hey to begin playing you need to submit 0.001 eth and remember to not leave the screen as doing it thrice will end the game.",
-        //   type: "starter",
-        // },
         {
           role: "assistant",
           content:
-            "Welcome to the game! I'm a mystery character. Ask me questions to guess who I am.",
-          type: "info",
+            "Hey to begin playing you need to submit 0.001 eth and remember to not leave the screen as doing it thrice will end the game.",
+          type: "starter",
         },
+        // {
+        //   role: "assistant",
+        //   content:
+        //     "Welcome to the game! I'm a mystery character. Ask me questions to guess who I am.",
+        //   type: "info",
+        // },
       ]);
     }
   }, [category, messages.length]);
 
+  const handleStartLuksoMutation = useMutation({
+    mutationFn: startGame,
+    onSuccess: () => {
+      console.log("Game started successfully!");
+    },
+    onError: (error) => {
+      console.error("Error starting game:", error);
+    },
+  });
   const handleSubmitEth = () => {
-    console.log("Submitting ETH to start the game");
-    // Add your ETH submission logic here
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "assistant",
-        content:
-          "Payment received! Let's start the game. Ask me questions to guess who I am.",
-        type: "info",
+    handleStartLuksoMutation.mutate(1, {
+      onSuccess: () => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              "Payment received! Let's start the game. Ask me questions to guess who I am.",
+            type: "info",
+          },
+        ]);
       },
-    ]);
+      onError: (error) => {
+        console.error("Error starting game:", error);
+      },
+    });
   };
 
   const messageRenderer = (message: Message) => {

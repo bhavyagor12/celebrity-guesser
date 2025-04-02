@@ -1,15 +1,11 @@
-import { http, createConfig } from "wagmi";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { http } from "wagmi";
 import { baseSepolia, lukso, luksoTestnet } from "wagmi/chains";
-import { coinbaseWallet } from "wagmi/connectors";
-
-export const config = createConfig({
+const projectId = "xsdfss";
+export const config = getDefaultConfig({
+  appName: "Create Wagmi",
+  projectId,
   chains: [baseSepolia, luksoTestnet, lukso],
-  connectors: [
-    coinbaseWallet({
-      appName: "Create Wagmi",
-      preference: "smartWalletOnly",
-    }),
-  ],
   transports: {
     [baseSepolia.id]: http(),
     [lukso.id]: http(),
