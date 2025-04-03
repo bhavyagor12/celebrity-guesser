@@ -20,7 +20,7 @@ import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
 import { useWriteContract } from "wagmi";
-import { parseEther, WalletClient } from "viem";
+import { parseEther } from "viem";
 import { useUpProvider } from "./up-provider";
 import { waitForTransactionReceipt } from "viem/actions";
 type Message = {
@@ -43,8 +43,7 @@ type Message = {
 // };
 
 export default function AIChat() {
-  const { client, accounts, contextAccounts, walletConnected } =
-    useUpProvider();
+  const { client, accounts, walletConnected } = useUpProvider();
   const [messages, setMessages] = useState<Message[]>([]);
   const {
     category,
@@ -56,7 +55,7 @@ export default function AIChat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { writeContract } = useWriteContract();
+  const [gameId, setGameId] = useState<number>(null);
 
   const startGame = async () => {
     if (!client || !walletConnected) {
@@ -83,14 +82,29 @@ export default function AIChat() {
         account: accounts[0] as `0x${string}`,
         chain: client?.chain,
         functionName: "startGame",
-        args: [1],
+        args: [],
         value: parseEther("0.001"),
       });
-
-      console.log("Transaction sent:", tx);
-
-      await waitForTransactionReceipt(client, { hash: tx });
-
+      console.log("Transaction hash:", tx);
+      const transactionReceipt = await waitForTransactionReceipt(client, {
+        hash: tx,
+      });
+      console.log("Transaction receipt:", transactionReceipt);
+      setStartedGame(true);
+      if (transactionReceipt) {
+        const gameId = transactionReceipt.logs[0].topics[1];
+        setGameId(Number(gameId));
+        console.log("Game ID:", gameId);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              "Lets get started! You can start guessing now. Ask for your first hint carefully. Remember, you have 5 hints to guess the character.",
+            type: "info",
+          },
+        ]);
+      }
       toast.success("Game started successfully!");
     } catch (error) {
       console.error("Transaction failed:", error);
@@ -159,75 +173,12 @@ export default function AIChat() {
         {
           role: "assistant",
           content:
-            "Hey to begin playing you need to submit 0.001 eth and remember to not leave the screen as doing it thrice will end the game.",
+            "Hey to begin playing you need to submit 2 dollars worth LYX and remember to not leave the screen as doing it thrice will end the game.",
           type: "starter",
         },
-        // {
-        //   role: "assistant",
-        //   content:
-        //     "Welcome to the game! I'm a mystery character. Ask me questions to guess who I am.",
-        //   type: "info",
-        // },
       ]);
     }
   }, [category, messages.length]);
-
-  // const handleStartLuksoMutation = useMutation({
-  //   mutationFn: startGame,
-  //   onSuccess: () => {
-  //     console.log("Game started successfully!");
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error starting game:", error);
-  //   },
-  // });
-  const handleSubmitEth = () => {
-    writeContract(
-      {
-        abi: lukso_contract_dets.abi,
-        address: lukso_contract_dets.contractAddress as `0x${string}`,
-        functionName: "startGame",
-        args: [1],
-        value: parseEther("0.002"), // Converts ETH to wei
-      },
-      {
-        onSuccess: (data) => {
-          console.log("Game started successfully!", data);
-          setStartedGame(true);
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: "assistant",
-              content:
-                "Payment received! Let's start the game. Ask me questions to guess who I am.",
-              type: "info",
-            },
-          ]);
-        },
-        onError: (error) => {
-          console.error("Error starting game:", error);
-        },
-      },
-    );
-
-    // handleStartLuksoMutation.mutate(1, {
-    //   onSuccess: (data) => {
-    //     console.log("Game started successfully!", data);
-    //     setMessages((prev) => [
-    //       ...prev,
-    //       {
-    //         role: "assistant",
-    //         content:
-    //           "Payment received! Let's start the game. Ask me questions to guess who I am.",
-    //         type: "info",
-    //       },
-    //     ]);
-    //   },
-    //   onError: (error) => {
-    //     console.error("Error starting game:", error);
-    //   },
-    // });
-  };
 
   const messageRenderer = (message: Message) => {
     switch (message.type) {
@@ -242,7 +193,7 @@ export default function AIChat() {
                 disabled={messages.length > 1}
                 className="bg-green-600 hover:bg-green-700"
               >
-                Submit 0.001 ETH to Play
+                Play
               </Button>
             </div>
           </div>
@@ -252,11 +203,10 @@ export default function AIChat() {
           <div className="flex items-start gap-3 max-w-[80%]">
             {message.role === "assistant" && <Avatar>🤖</Avatar>}
             <div
-              className={`rounded-lg px-4 py-2 ${
-                message.role === "user"
+              className={`rounded-lg px-4 py-2 ${message.role === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted"
-              }`}
+                }`}
             >
               {message.content}
             </div>
@@ -322,7 +272,7 @@ export default function AIChat() {
             ) : (
               <div className="text-center w-full">
                 <p className="mb-2">Character revealed! It was {character}.</p>
-                <Button onClick={() => {}}>Play Again</Button>
+                <Button onClick={() => { }}>Play Again</Button>
               </div>
             )}
           </CardFooter>

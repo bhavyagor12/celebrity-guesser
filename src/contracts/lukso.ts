@@ -1,9 +1,15 @@
 export const lukso_contract_dets = {
-  contractAddress: "0x3347b4d90ebe72befb30444c9966b2b990ae9fcb",
+  contractAddress: "0x9db544b32dcdaa4513d535372fc5db7f4e742e93",
   abi: [
     {
       type: "constructor",
-      inputs: [],
+      inputs: [
+        {
+          name: "_nftContract",
+          type: "address",
+          internalType: "address payable",
+        },
+      ],
       stateMutability: "nonpayable",
     },
     {
@@ -29,36 +35,19 @@ export const lukso_contract_dets = {
     },
     {
       type: "function",
-      name: "fundContract",
-      inputs: [],
-      outputs: [],
-      stateMutability: "payable",
-    },
-    {
-      type: "function",
       name: "games",
       inputs: [
         {
           name: "",
-          type: "uint256",
-          internalType: "uint256",
+          type: "address",
+          internalType: "address",
         },
       ],
       outputs: [
         {
-          name: "gameId",
-          type: "uint256",
-          internalType: "uint256",
-        },
-        {
           name: "player",
           type: "address",
           internalType: "address",
-        },
-        {
-          name: "difficulty",
-          type: "uint8",
-          internalType: "enum GuessTheCharacter.Difficulty",
         },
         {
           name: "entryFee",
@@ -75,19 +64,13 @@ export const lukso_contract_dets = {
     },
     {
       type: "function",
-      name: "getPlayerActiveGames",
-      inputs: [
-        {
-          name: "player",
-          type: "address",
-          internalType: "address",
-        },
-      ],
+      name: "nftContract",
+      inputs: [],
       outputs: [
         {
           name: "",
-          type: "uint256[]",
-          internalType: "uint256[]",
+          type: "address",
+          internalType: "contract CategoryGuessedNFT",
         },
       ],
       stateMutability: "view",
@@ -107,41 +90,22 @@ export const lukso_contract_dets = {
     },
     {
       type: "function",
-      name: "playerGames",
-      inputs: [
-        {
-          name: "",
-          type: "address",
-          internalType: "address",
-        },
-        {
-          name: "",
-          type: "uint256",
-          internalType: "uint256",
-        },
-      ],
-      outputs: [
-        {
-          name: "",
-          type: "uint256",
-          internalType: "uint256",
-        },
-      ],
-      stateMutability: "view",
-    },
-    {
-      type: "function",
       name: "resolveGame",
       inputs: [
         {
-          name: "gameId",
-          type: "uint256",
-          internalType: "uint256",
+          name: "player",
+          type: "address",
+          internalType: "address",
         },
         {
           name: "won",
           type: "bool",
           internalType: "bool",
+        },
+        {
+          name: "category",
+          type: "string",
+          internalType: "string",
         },
       ],
       outputs: [],
@@ -149,40 +113,9 @@ export const lukso_contract_dets = {
     },
     {
       type: "function",
-      name: "rewardMultipliers",
-      inputs: [
-        {
-          name: "",
-          type: "uint8",
-          internalType: "enum GuessTheCharacter.Difficulty",
-        },
-      ],
-      outputs: [
-        {
-          name: "",
-          type: "uint256",
-          internalType: "uint256",
-        },
-      ],
-      stateMutability: "view",
-    },
-    {
-      type: "function",
       name: "startGame",
-      inputs: [
-        {
-          name: "_difficulty",
-          type: "uint8",
-          internalType: "enum GuessTheCharacter.Difficulty",
-        },
-      ],
-      outputs: [
-        {
-          name: "",
-          type: "uint256",
-          internalType: "uint256",
-        },
-      ],
+      inputs: [],
+      outputs: [],
       stateMutability: "payable",
     },
     {
@@ -203,12 +136,6 @@ export const lukso_contract_dets = {
       name: "GameLost",
       inputs: [
         {
-          name: "gameId",
-          type: "uint256",
-          indexed: true,
-          internalType: "uint256",
-        },
-        {
           name: "player",
           type: "address",
           indexed: true,
@@ -222,22 +149,10 @@ export const lukso_contract_dets = {
       name: "GameStarted",
       inputs: [
         {
-          name: "gameId",
-          type: "uint256",
-          indexed: true,
-          internalType: "uint256",
-        },
-        {
           name: "player",
           type: "address",
           indexed: true,
           internalType: "address",
-        },
-        {
-          name: "difficulty",
-          type: "uint8",
-          indexed: false,
-          internalType: "enum GuessTheCharacter.Difficulty",
         },
         {
           name: "entryFee",
@@ -253,12 +168,6 @@ export const lukso_contract_dets = {
       name: "GameWon",
       inputs: [
         {
-          name: "gameId",
-          type: "uint256",
-          indexed: true,
-          internalType: "uint256",
-        },
-        {
           name: "player",
           type: "address",
           indexed: true,
@@ -269,6 +178,12 @@ export const lukso_contract_dets = {
           type: "uint256",
           indexed: false,
           internalType: "uint256",
+        },
+        {
+          name: "category",
+          type: "string",
+          indexed: false,
+          internalType: "string",
         },
       ],
       anonymous: false,
