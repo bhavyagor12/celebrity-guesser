@@ -6,11 +6,14 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "./ui/sonner";
 import { GameProvider } from "./game-context";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { UpProvider } from "./up-provider";
 
 const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system">
-      <GameProvider>{children}</GameProvider>
+      <UpProvider>
+        <GameProvider>{children}</GameProvider>
+      </UpProvider>
       <Toaster />
     </ThemeProvider>
   );

@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
 import { useWriteContract } from "wagmi";
 import { parseEther } from "viem";
+import { useUpProvider } from "./up-provider";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -61,6 +62,9 @@ type Message = {
 // };
 
 export default function AIChat() {
+  const { client, accounts, contextAccounts, walletConnected } =
+    useUpProvider();
+  console.log({ client, accounts, contextAccounts, walletConnected });
   const [messages, setMessages] = useState<Message[]>([]);
   const {
     category,
