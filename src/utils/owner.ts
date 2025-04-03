@@ -5,12 +5,18 @@ import { luksoTestnet } from "viem/chains";
 
 type ResolveGameResponse = { hash: string };
 
-const walletClient = createWalletClient({
-  chain: luksoTestnet,
-  transport: http(process.env.NEXT_PUBLIC_RPC_URL as string),
-});
 
-const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`);
+if (!process.env.NEXT_PUBLIC_PRIVATE_KEY) {
+  throw new Error("PRIVATE_KEY environment variable is not set.");
+}
+
+const account = privateKeyToAccount(process.env.NEXT_PUBLIC_PRIVATE_KEY as `0x${string}`);
+
+const walletClient = createWalletClient({
+  account,
+  chain: luksoTestnet,
+  transport: http(),
+});
 
 export async function resolveGame(
   player: `0x${string}`,

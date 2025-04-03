@@ -1,14 +1,9 @@
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { http } from "wagmi";
-import { baseSepolia, lukso, luksoTestnet } from "wagmi/chains";
-const projectId = "xsdfss";
-export const config = getDefaultConfig({
-  appName: "Create Wagmi",
-  projectId,
-  chains: [baseSepolia, luksoTestnet, lukso],
+import { createConfig, http } from "wagmi";
+import { luksoTestnet } from "wagmi/chains";
+
+export const config = createConfig({
+  chains: [luksoTestnet],
   transports: {
-    [baseSepolia.id]: http(),
-    [lukso.id]: http(),
     [luksoTestnet.id]: http(),
   },
 });
