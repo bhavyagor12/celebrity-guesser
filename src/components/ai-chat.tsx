@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,7 +19,6 @@ import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
-// import { publicClientTest, walletClientTest } from "@/utils/lukso-client";
 import { useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 type Message = {
@@ -228,10 +227,11 @@ export default function AIChat() {
           <div className="flex items-start gap-3 max-w-[80%]">
             {message.role === "assistant" && <Avatar>🤖</Avatar>}
             <div
-              className={`rounded-lg px-4 py-2 ${message.role === "user"
+              className={`rounded-lg px-4 py-2 ${
+                message.role === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted"
-                }`}
+              }`}
             >
               {message.content}
             </div>
@@ -297,7 +297,7 @@ export default function AIChat() {
             ) : (
               <div className="text-center w-full">
                 <p className="mb-2">Character revealed! It was {character}.</p>
-                <Button onClick={() => { }}>Play Again</Button>
+                <Button onClick={() => {}}>Play Again</Button>
               </div>
             )}
           </CardFooter>
