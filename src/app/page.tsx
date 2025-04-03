@@ -1,6 +1,5 @@
 import AIChat from "@/components/ai-chat";
 import CategoryChips from "@/components/category-chips";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Home() {
   return (
@@ -16,7 +15,6 @@ export default function Home() {
         </p>
         <CategoryChips />
         <AIChat />
-        <ConnectButton />
       </div>
     </main>
   );

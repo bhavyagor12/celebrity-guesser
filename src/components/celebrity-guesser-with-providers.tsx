@@ -5,7 +5,6 @@ import { config } from "@/utils/wagmi";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "./ui/sonner";
 import { GameProvider } from "./game-context";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { UpProvider } from "./up-provider";
 
 const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
@@ -35,9 +34,7 @@ export const CelebrityAppWithProviders = ({
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <CelebrityApp>{children}</CelebrityApp>
-        </RainbowKitProvider>
+        <CelebrityApp>{children}</CelebrityApp>
       </QueryClientProvider>
     </WagmiProvider>
   );
