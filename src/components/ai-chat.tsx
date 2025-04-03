@@ -23,6 +23,7 @@ import { useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 import { useUpProvider } from "./up-provider";
 import { waitForTransactionReceipt } from "viem/actions";
+import { resolveGame } from "@/utils/owner";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -85,16 +86,9 @@ export default function AIChat() {
         args: [],
         value: parseEther("0.001"),
       });
-      console.log("Transaction hash:", tx);
-      const transactionReceipt = await waitForTransactionReceipt(client, {
-        hash: tx,
-      });
-      console.log("Transaction receipt:", transactionReceipt);
-      setStartedGame(true);
-      if (transactionReceipt) {
-        const gameId = transactionReceipt.logs[0].topics[1];
-        setGameId(Number(gameId));
-        console.log("Game ID:", gameId);
+      console.log("Transaction sent:", tx);
+      if (tx) {
+        setStartedGame(true);
         setMessages((prev) => [
           ...prev,
           {
@@ -144,6 +138,8 @@ export default function AIChat() {
             type: "info",
           },
         ]);
+        const data = await resolveGame(accounts[0] as `0x${string}`, true, category as string);
+        console.log("Game resolved successfully:", data);
         setCharacterRevealed(true);
         setStartedGame(false);
       }
