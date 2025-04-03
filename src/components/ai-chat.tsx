@@ -20,8 +20,9 @@ import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
 import { useWriteContract } from "wagmi";
-import { parseEther } from "viem";
+import { parseEther, WalletClient } from "viem";
 import { useUpProvider } from "./up-provider";
+import { waitForTransactionReceipt } from "viem/actions";
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -41,30 +42,9 @@ type Message = {
 //   }
 // };
 
-// const startGame = async (_difficulty: number) => {
-//   try {
-//     const baseEntryFee = await fetchBaseEntryFee();
-//
-//     const { request } = await publicClientTest.simulateContract({
-//       address: lukso_contract_dets.contractAddress as `0x${string}`,
-//       abi: lukso_contract_dets.abi,
-//       functionName: "startGame",
-//       args: [_difficulty],
-//       value: baseEntryFee as bigint,
-//     });
-//     console.log("Request:", request);
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     const txHash = await walletClientTest.writeContract(request as any);
-//     return txHash;
-//   } catch (error) {
-//     return error;
-//   }
-// };
-
 export default function AIChat() {
   const { client, accounts, contextAccounts, walletConnected } =
     useUpProvider();
-  console.log({ client, accounts, contextAccounts, walletConnected });
   const [messages, setMessages] = useState<Message[]>([]);
   const {
     category,
@@ -77,6 +57,47 @@ export default function AIChat() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { writeContract } = useWriteContract();
+
+  const startGame = async () => {
+    if (!client || !walletConnected) {
+      toast.warning("Please connect your wallet to start the game.");
+      return; // Stop execution if no client or wallet
+    }
+
+    console.log("Starting game...", client, accounts);
+
+    try {
+      console.log({
+        args: {
+          address: lukso_contract_dets.contractAddress as `0x${string}`,
+          abi: lukso_contract_dets.abi,
+          functionName: "startGame",
+          args: [1],
+          account: accounts[0] as `0x${string}`,
+          chain: client?.chain,
+        },
+      });
+      const tx = await client.writeContract({
+        abi: lukso_contract_dets.abi,
+        address: lukso_contract_dets.contractAddress as `0x${string}`,
+        account: accounts[0] as `0x${string}`,
+        chain: client?.chain,
+        functionName: "startGame",
+        args: [1],
+        value: parseEther("0.001"),
+      });
+
+      console.log("Transaction sent:", tx);
+
+      await waitForTransactionReceipt(client, { hash: tx });
+
+      toast.success("Game started successfully!");
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      toast.error("Transaction failed! Check console for details.");
+      throw error;
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -217,7 +238,7 @@ export default function AIChat() {
             <div className="rounded-lg px-4 py-3 border border-black-300">
               <p className="mb-3">{message.content}</p>
               <Button
-                onClick={handleSubmitEth}
+                onClick={() => startGame()}
                 disabled={messages.length > 1}
                 className="bg-green-600 hover:bg-green-700"
               >
