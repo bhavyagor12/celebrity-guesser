@@ -22,7 +22,11 @@ export async function generateChatResponse({
   category,
   message,
   messageHistory,
-}: ChatRequestParams): Promise<{ response: string; isCorrect: boolean }> {
+}: ChatRequestParams): Promise<{
+  response: string;
+  isCorrect: boolean;
+  characterName?: string;
+}> {
   try {
     // Convert message history to a format the AI can understand
     const historyText = messageHistory
@@ -36,7 +40,7 @@ export async function generateChatResponse({
     const prompt = `
 <instructions>
 You will roleplay as a famous person from the category <category>${category}</category>.
-Choose a character that has history / records from 1990s to 2020s. 
+Choose a character that has history / records from the 1990s to 2020s. 
 The user is trying to guess your identity through conversation. 
 Your goal is to make this challenging but fair.
 
@@ -69,7 +73,11 @@ If the user guesses correctly by identifying you by full name, respond in this f
 
 <correct>true</correct>
 
-If the guess is incorrect, do **not** include the <correct> tag. Just continue roleplaying.
+<character_name>
+[Full name of the character]
+</character_name>
+
+If the guess is incorrect, do **not** include the <correct> tag or <character_name>. Just continue roleplaying.
 `;
     // Generate the AI response using Google's model
     const { text } = await generateText({
@@ -84,7 +92,15 @@ If the guess is incorrect, do **not** include the <correct> tag. Just continue r
     const responseMatch = text.match(/<response>([\s\S]*?)<\/response>/i);
     const response = responseMatch ? responseMatch[1].trim() : text;
 
-    return { response, isCorrect };
+    let characterName: string | undefined;
+    if (isCorrect) {
+      const nameMatch = text.match(
+        /<character_name>([\s\S]*?)<\/character_name>/i,
+      );
+      characterName = nameMatch ? nameMatch[1].trim() : undefined;
+    }
+
+    return { response, isCorrect, characterName };
   } catch (error) {
     console.error("Error generating AI response:", error);
     return {

@@ -1,5 +1,5 @@
 export const lukso_contract_dets = {
-  contractAddress: "0x9db544b32dcdaa4513d535372fc5db7f4e742e93",
+  contractAddress: "0xacf703c693bfcb7e198e656fe0108d0ee068f98d",
   abi: [
     {
       type: "constructor",
@@ -104,6 +104,11 @@ export const lukso_contract_dets = {
         },
         {
           name: "category",
+          type: "string",
+          internalType: "string",
+        },
+        {
+          name: "svg",
           type: "string",
           internalType: "string",
         },

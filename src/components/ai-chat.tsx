@@ -19,29 +19,14 @@ import { Loader2, Send } from "lucide-react";
 import { generateChatResponse } from "@/utils/actions";
 import { toast } from "sonner";
 import { lukso_contract_dets } from "@/contracts/lukso";
-import { useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 import { useUpProvider } from "./up-provider";
-import { waitForTransactionReceipt } from "viem/actions";
 import { resolveGame } from "@/utils/owner";
 type Message = {
   role: "user" | "assistant";
   content: string;
   type: string;
 };
-
-// const fetchBaseEntryFee = async () => {
-//   try {
-//     const fee = await publicClientTest.readContract({
-//       address: lukso_contract_dets.contractAddress as `0x${string}`,
-//       abi: lukso_contract_dets.abi,
-//       functionName: "baseEntryFee",
-//     });
-//     return fee;
-//   } catch (error) {
-//     console.error("Error fetching base entry fee:", error);
-//   }
-// };
 
 export default function AIChat() {
   const { client, accounts, walletConnected } = useUpProvider();
@@ -50,13 +35,15 @@ export default function AIChat() {
     category,
     characterRevealed,
     character,
+    setCharacter,
+    startedGame,
     setStartedGame,
     setCharacterRevealed,
   } = useGame();
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [gameId, setGameId] = useState<number>(null);
+  const [guessCount, setGuessCount] = useState(0); // Track number of user guesses
 
   const startGame = async () => {
     if (!client || !walletConnected) {
@@ -111,6 +98,18 @@ export default function AIChat() {
     e.preventDefault();
 
     if (!input.trim()) return;
+    if (!startedGame) {
+      toast.error("Please start the game first by pressing the play button.");
+      return;
+    }
+
+    if (startedGame) {
+      setGuessCount((prev) => prev + 1); // Increment guess count
+      if (guessCount >= 5) {
+        toast.error("You have used all your guesses!, start a new game.");
+        return;
+      }
+    }
 
     const userMessage: Message = {
       role: "user",
@@ -123,13 +122,18 @@ export default function AIChat() {
     setIsLoading(true);
 
     try {
-      const { response: aiResponse, isCorrect } = await generateChatResponse({
+      const {
+        response: aiResponse,
+        isCorrect,
+        characterName,
+      } = await generateChatResponse({
         category: category || "",
         message: input,
         messageHistory: messages,
       });
 
       if (isCorrect) {
+        setCharacter(characterName as string);
         setMessages((prev) => [
           ...prev,
           {
@@ -138,12 +142,31 @@ export default function AIChat() {
             type: "info",
           },
         ]);
-        const data = await resolveGame(accounts[0] as `0x${string}`, true, category as string);
+        const data = await resolveGame(
+          accounts[0] as `0x${string}`,
+          true,
+          category as string,
+          characterName as string,
+        );
         console.log("Game resolved successfully:", data);
         setCharacterRevealed(true);
         setStartedGame(false);
       }
+      setGuessCount((prev) => prev + 1);
 
+      if (guessCount + 1 >= 5) {
+        setStartedGame(false);
+        setCharacterRevealed(false);
+        toast.error("Game over! You couldn't guess the character.");
+
+        await resolveGame(
+          accounts[0] as `0x${string}`,
+          false,
+          category as string,
+          "",
+        );
+        return;
+      }
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: aiResponse, type: "info" },
@@ -223,9 +246,6 @@ export default function AIChat() {
         <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Guess Who I Am: {category}</CardTitle>
-            {/* Button variant="outline" size="icon" onClick={() => { }}>
-              <RefreshCw className="h-4 w-4" />
-            </Button> */}
           </CardHeader>
 
           <CardContent>
@@ -268,7 +288,8 @@ export default function AIChat() {
             ) : (
               <div className="text-center w-full">
                 <p className="mb-2">Character revealed! It was {character}.</p>
-                <Button onClick={() => { }}>Play Again</Button>
+                You will receive your reward as soon as the transaction is
+                confirmed with a special NFT. Thank you for playing!
               </div>
             )}
           </CardFooter>
