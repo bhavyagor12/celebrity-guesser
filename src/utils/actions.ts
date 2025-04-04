@@ -2,12 +2,7 @@
 
 import { generateText } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-};
-
+import { Message } from "../components/game-context";
 type ChatRequestParams = {
   category: string;
   message: string;

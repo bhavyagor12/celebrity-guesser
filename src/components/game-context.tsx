@@ -33,7 +33,7 @@ type GameContextType = {
 
 
 export type Message = {
-  role: "user" | "assistant";
+  role: string;
   content: string;
   type: string;
 };

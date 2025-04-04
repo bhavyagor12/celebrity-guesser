@@ -22,6 +22,7 @@ import { lukso_contract_dets } from "@/contracts/lukso";
 import { parseEther } from "viem";
 import { useUpProvider } from "./up-provider";
 import { resolveGame } from "@/utils/owner";
+import { Message } from "./game-context";
 
 export default function AIChat() {
   const { client, accounts, walletConnected } = useUpProvider();
@@ -107,7 +108,7 @@ export default function AIChat() {
       }
     }
 
-    const userMessage: Message = {
+    const userMessage = {
       role: "user",
       content: input,
       type: "info",
