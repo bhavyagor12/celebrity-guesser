@@ -1,5 +1,5 @@
 import { lukso_contract_dets } from "@/contracts/lukso";
-import { createWalletClient, http, encodeFunctionData } from "viem";
+import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { luksoTestnet } from "viem/chains";
 import { makeSVG } from "./svg";
