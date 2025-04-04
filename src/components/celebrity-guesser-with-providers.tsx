@@ -10,9 +10,9 @@ import { UpProvider } from "./up-provider";
 const CelebrityApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system">
-      <UpProvider>
-        <GameProvider>{children}</GameProvider>
-      </UpProvider>
+      <GameProvider>
+        <UpProvider>{children}</UpProvider>
+      </GameProvider>
       <Toaster />
     </ThemeProvider>
   );

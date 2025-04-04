@@ -22,16 +22,12 @@ import { lukso_contract_dets } from "@/contracts/lukso";
 import { parseEther } from "viem";
 import { useUpProvider } from "./up-provider";
 import { resolveGame } from "@/utils/owner";
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-  type: string;
-};
 
 export default function AIChat() {
   const { client, accounts, walletConnected } = useUpProvider();
-  const [messages, setMessages] = useState<Message[]>([]);
   const {
+    messages,
+    setMessages,
     category,
     setCategory,
     characterRevealed,
@@ -201,7 +197,7 @@ export default function AIChat() {
         {
           role: "assistant",
           content:
-            "Hey to begin playing you need to submit 2 dollars worth LYX and remember to not leave the screen as doing it thrice will end the game.",
+            "Hey to begin playing click the play button and remember once the game starts you have 5 messages to guess the character.",
           type: "starter",
         },
       ]);

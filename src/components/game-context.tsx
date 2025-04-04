@@ -19,6 +19,8 @@ export type Category =
   | "Cricket";
 
 type GameContextType = {
+  messages: Message[];
+  setMessages:React.Dispatch<React.SetStateAction<Message[]>>; 
   category: Category | null;
   character: string | null;
   setCharacter: (character: string | null) => void;
@@ -29,9 +31,17 @@ type GameContextType = {
   setStartedGame: (started: boolean) => void;
 };
 
+
+export type Message = {
+  role: "user" | "assistant";
+  content: string;
+  type: string;
+};
+
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: ReactNode }) {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [character, setCharacter] = useState<string | null>(null);
   const [characterRevealed, setCharacterRevealed] = useState(false);
@@ -68,11 +78,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
         handleMouseLeave,
       );
     };
-  }, [category,startedGame]);
+  }, [category, startedGame]);
 
   return (
     <GameContext.Provider
       value={{
+        messages,
+        setMessages,
         category,
         setCategory,
         character,
