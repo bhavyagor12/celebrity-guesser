@@ -1,3 +1,7 @@
+
+<img width="1156" alt="Screenshot 2025-04-04 at 17 12 51" src="https://github.com/user-attachments/assets/fd7cfe35-746a-4af2-810e-d8add96cab63" />
+
+
 # 🎭 Guess the Character – An Onchain AI Game
 
 ## **Overview**
@@ -29,6 +33,7 @@ If they fail, the entry fee is lost, but they can try again!
 
 - The **GuessTheCharacter.sol** contract **mints an LSP8 NFT** as a reward.
 - The user receives **1.25x their entry fee** back.  
+
   5️⃣ If the user **loses**, the entry fee is burned, and they can try again.
 
 ---
