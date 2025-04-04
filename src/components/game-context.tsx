@@ -68,7 +68,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         handleMouseLeave,
       );
     };
-  }, [category]);
+  }, [category,startedGame]);
 
   return (
     <GameContext.Provider

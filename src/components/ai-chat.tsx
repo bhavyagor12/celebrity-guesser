@@ -33,6 +33,7 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const {
     category,
+    setCategory,
     characterRevealed,
     character,
     setCharacter,
@@ -104,7 +105,6 @@ export default function AIChat() {
     }
 
     if (startedGame) {
-      setGuessCount((prev) => prev + 1); // Increment guess count
       if (guessCount >= 5) {
         toast.error("You have used all your guesses!, start a new game.");
         return;
@@ -165,6 +165,15 @@ export default function AIChat() {
           category as string,
           "",
         );
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Game over! You couldn't guess the character.",
+            type: "info",
+          },
+        ]);
+        setCategory(null);
         return;
       }
       setMessages((prev) => [
