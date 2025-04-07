@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
   });
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">🏆 Leaderboard</h1>
       <Input
         placeholder="Search wallet..."
@@ -85,7 +85,7 @@ export default function LeaderboardPage() {
         onChange={(e) => setGlobalFilter(e.target.value)}
         className="mb-4"
       />
-      <div className="rounded-md border">
+      <div className="rounded-md border w-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -107,7 +107,7 @@ export default function LeaderboardPage() {
                 key={row.id}
                 className={
                   row.original.walletAddress === mockUser
-                    ? "bg-yellow-100 font-semibold"
+                    ? "bg-yellow-100 text-black font-semibold"
                     : ""
                 }
               >
